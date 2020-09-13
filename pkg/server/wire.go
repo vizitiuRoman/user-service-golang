@@ -3,9 +3,9 @@ package server
 import (
 	"os"
 
+	. "github.com/fasthttp/router"
 	. "github.com/user-service/pkg/controllers"
 	"github.com/user-service/pkg/middlewares"
-	. "github.com/fasthttp/router"
 	"go.uber.org/zap"
 	"go.uber.org/zap/zapcore"
 )

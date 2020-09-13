@@ -9,10 +9,10 @@ import (
 	"strings"
 	"time"
 
-	. "github.com/user-service/pkg/models"
-	. "github.com/user-service/pkg/utils"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/twinj/uuid"
+	. "github.com/user-service/pkg/models"
+	. "github.com/user-service/pkg/utils"
 	"github.com/valyala/fasthttp"
 )
 

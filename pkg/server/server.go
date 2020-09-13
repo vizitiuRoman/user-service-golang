@@ -6,9 +6,9 @@ import (
 	"os/signal"
 	"syscall"
 
+	"github.com/joho/godotenv"
 	"github.com/user-service/pkg/middlewares"
 	. "github.com/user-service/pkg/models"
-	"github.com/joho/godotenv"
 	"github.com/valyala/fasthttp"
 	"go.uber.org/zap"
 )

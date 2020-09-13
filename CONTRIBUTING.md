@@ -1,58 +1,58 @@
-# Участие в разработке
+# Participation in development
 
-## Начало работы
+## Beginning of work
 
-* Клонирование репозитория
-    ```bash
-    git clone
-    cd 
-    ```
+* Cloning a repository
+    `` bash
+    git clone https://github.com/vizitiuRoman/user-service-golang.git
+    cd user-service-golang
+    ``,
 
-* Установка зависимостей
-    ```bash
-    go get ./...
-    ```
+* Install dependencies
+    `` bash
+    go get. / ...
+    ``,
 
-* Линтинг проекта
-    ```bash
+* Linting project
+    `` bash
     make lint
-    ```
+    ``,
 
-* Unit тесты 
-    ```bash
+* Unit tests
+    `` bash
     make test
-    ```
+    ``,
 
-* Запуск локальной версии в режиме hot reload
-    ```bash
+* Running local version in hot reload mode
+    `` bash
     cd docker && docker-compose up
-    nodemon --exec go run cmd/main.go --signal SIGTERM
-    ```
+    nodemon --exec go run cmd / main.go --signal SIGTERM
+    ``,
 
 ## Code-style
 
-Код должен быть отформатирован утилитой `gofmt`. Все замечания линтера (кроме очевидно ошибочных)
-должны быть исправлены перед пушем на сервер (а лучше перед каждым коммитом).
+The code must be formatted with the `gofmt` utility. All linter comments (except for obviously erroneous)
+must be fixed before pushing to the server (or better before each commit).
 
 ## IDE
-Предпочительной средой разработки является [GoLand] или [IntelliJ IDEA] от Jetbrains.
+The preferred development environment is [GoLand] or [IntelliJ IDEA] from Jetbrains.
 
-В репозиторий проекта включены конфигурационные файлы GoLand/IDEA, с преднастроенным автоформатированием кода утилитой
-gofmt и запуском линтера в быстром режиме после каждого сохранения файлов и подключение к базе данных из 
-локального docker-окружения.
+The project repository includes GoLand / IDEA configuration files, with pre-configured code auto-formatting utility
+gofmt and running the linter in fast mode after every file save and connecting to the database from
+local docker environment.
  
-Так же добавлен ряд конфигураций для запуска:
-* Сервиса в docker окружении
-* Линтера
-* Unit тестов
-* Полного тестирования (unit+интеграционное)
+Also added a number of configurations for launch:
+* Service in docker environment
+* Linter
+* Unit tests
+* Full testing (unit + integration)
 
-### Именование веток
+### Branch naming
 
-Имена веток состоят из префикса, номера задачи, если есть, и краткого описания задачи на английском (2-4 слова). 
-Префиксом является тип задачи (bug, feature), с завершающим слэшем `/`.
+Branch names consist of a prefix, issue number, if any, and a short description of the issue in English (2-4 words).
+The prefix is ​​the issue type (bug, feature), followed by a trailing slash `/`.
 
-Примеры: 
+Examples:
     
-    bug/CS-13-fix-response-code
-    feature/CS-31-new-api-method  
+    hotfix/auth-fix-response-code
+    feature/auth-new-api-method
