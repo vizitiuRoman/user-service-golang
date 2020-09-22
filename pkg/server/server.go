@@ -13,12 +13,12 @@ import (
 	"go.uber.org/zap"
 )
 
-type UbServer interface {
-	StartServer()
+type UserService interface {
+	StartService()
 	waitShutdown()
 }
 
-type Server struct {
+type Service struct {
 	controllers fasthttp.RequestHandler
 	port        string
 	interrupt   chan os.Signal
@@ -54,8 +54,8 @@ func init() {
 	}
 }
 
-func NewServer() *Server {
-	return &Server{
+func NewService() *Service {
+	return &Service{
 		controllers: initControllers().Handler,
 		port:        os.Getenv("PORT"),
 		interrupt:   make(chan os.Signal, 1),
@@ -63,7 +63,7 @@ func NewServer() *Server {
 	}
 }
 
-func (srv *Server) StartServer() {
+func (srv *Service) StartService() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
 	go func(listen chan error) {
@@ -75,7 +75,7 @@ func (srv *Server) StartServer() {
 	srv.waitShutdown()
 }
 
-func (srv *Server) waitShutdown() {
+func (srv *Service) waitShutdown() {
 	for {
 		select {
 		case err := <-srv.listen:

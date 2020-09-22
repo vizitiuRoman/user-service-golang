@@ -5,6 +5,6 @@ import (
 )
 
 func main() {
-	srv := server.NewServer()
-	srv.StartServer()
+	srv := server.NewService()
+	srv.StartService()
 }
