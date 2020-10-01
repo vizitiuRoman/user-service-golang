@@ -1,0 +1,85 @@
+package controllers
+
+import (
+	"encoding/json"
+	"errors"
+
+	. "github.com/user-service/pkg/models"
+	. "github.com/user-service/pkg/utils"
+	"github.com/valyala/fasthttp"
+)
+
+func GetUsers(ctx *fasthttp.RequestCtx) {
+	var user User
+	users, err := user.FindAll()
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusInternalServerError, err)
+		return
+	}
+	JSON(ctx, fasthttp.StatusOK, users)
+}
+
+func GetUser(ctx *fasthttp.RequestCtx) {
+	userID := ctx.UserValue(UserID).(uint64)
+
+	var user User
+	foundUser, err := user.FindByID(userID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusNotFound, errors.New("Not found user"))
+		return
+	}
+	JSON(ctx, fasthttp.StatusOK, foundUser)
+}
+
+func UpdateUser(ctx *fasthttp.RequestCtx) {
+	userID := ctx.UserValue(UserID).(uint64)
+
+	var user User
+	err := json.Unmarshal(ctx.PostBody(), &user)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnprocessableEntity, err)
+		return
+	}
+
+	if userID != user.ID {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	user.Prepare()
+	err = user.Validate("")
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusBadRequest, err)
+		return
+	}
+
+	err = user.Update(userID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusInternalServerError, err)
+		return
+	}
+
+	JSON(ctx, fasthttp.StatusOK, User{ID: userID, Email: user.Email})
+}
+
+func DeleteUser(ctx *fasthttp.RequestCtx) {
+	userID := ctx.UserValue(UserID).(uint64)
+
+	aUUID := ctx.UserValue(AccessUUID).(string)
+	rUUID := ctx.UserValue(RefreshUUID).(string)
+
+	var token TokenDetails
+	err := token.DeleteByUUID(ctx, aUUID, rUUID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	var user User
+	err = user.DeleteByID(userID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusInternalServerError, err)
+		return
+	}
+	JSON(ctx, fasthttp.StatusOK, true)
+}
