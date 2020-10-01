@@ -13,6 +13,6 @@ lint:
 	@cd pkg && golangci-lint run ./...
 
 docker-build:
-	docker build -t vizitiuroman/backend-ub .
-	docker tag vizitiuroman/backend-ub vizitiuroman/backend-ub:1.0.0
+	docker build -t vizitiuroman/user-service-golang .
+	docker tag vizitiuroman/user-service-golang vizitiuroman/user-service-golang:1.0.0
 
