@@ -1,0 +1,496 @@
+{
+	"info": {
+		"_postman_id": "9818b7e0-0ec3-4545-b90a-d4320d3370d6",
+		"name": "taxi0md",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "auth",
+			"item": [
+				{
+					"name": "/v1/auth/register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "d564defa-cf6c-4f15-9e56-247ae230d5aa",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.globals.set(\"user-service-beartoken\", jsonData.token);",
+									"pm.globals.set(\"user-service-userId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"roman@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/v1/auth/register",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/auth/login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "bc89f487-aa24-4c0e-8a6c-84da18798b95",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.globals.set(\"user-service-beartoken\", jsonData.token);",
+									"pm.globals.set(\"user-service-userId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"roman@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/v1/auth/login",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/auth/logout",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/v1/auth/logout/3",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"logout",
+								"3"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/auth/refresh",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "702ca571-dbf5-4662-8cb1-55b46c00e15c",
+								"exec": [
+									"var jsonData = pm.response.json();",
+									"pm.globals.set(\"taxi0md-beartoken\", jsonData.token);",
+									"pm.globals.set(\"taxi0md-userId\", jsonData.id);"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/v1/auth/refresh",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"v1",
+								"auth",
+								"refresh"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "user",
+			"item": [
+				{
+					"name": "/v1/users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "2e9d65c3-f177-4f48-b457-e36b3c2d60ef",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"roma@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{user-service}}/v1/users",
+							"host": [
+								"{{user-service}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/users/:userId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "707942db-3762-4ae1-8c6a-a9c32e0296df",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"roma@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taxi0md-user-service}}/v1/users/15",
+							"host": [
+								"{{taxi0md-user-service}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"15"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/users",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "526214cf-bf85-47ce-8f5f-708e6c189718",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"id\": 1,\n    \"email\":\"roman@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taxi0md-user-service}}/v1/users",
+							"host": [
+								"{{taxi0md-user-service}}"
+							],
+							"path": [
+								"v1",
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "/v1/users/:userId",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"id": "642be8cf-4e5c-4e4f-9fe4-1005a5cf233c",
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{user-service-beartoken}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "DELETE",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\":\"roma@mail.ru\",\n    \"password\":\"romka228\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{taxi0md-user-service}}/v1/users/19",
+							"host": [
+								"{{taxi0md-user-service}}"
+							],
+							"path": [
+								"v1",
+								"users",
+								"19"
+							]
+						}
+					},
+					"response": []
+				}
+			],
+			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "SETUP ENV",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "46c7ce57-0feb-4c4e-8119-30c039ac8d99",
+						"exec": [
+							"pm.collectionVariables.set(\"user-service\", \"http://localhost:8060/api\");",
+							"// pm.collectionVariables.set(\"host\", \"https://testpay.maib.md:8443\");",
+							"",
+							"console.log(pm.collectionVariables.toObject());",
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "52d2d236-6026-4961-be3b-d145079cddc2",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "",
+						"value": "",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n\t\"user-service\":\"{{user-service}}\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://postman-echo.com/post",
+					"protocol": "https",
+					"host": [
+						"postman-echo",
+						"com"
+					],
+					"path": [
+						"post"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/ping",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{user-service}}/ping",
+					"host": [
+						"{{user-service}}"
+					],
+					"path": [
+						"ping"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"id": "5f7184b8-a39e-4d66-999a-9f1c2299334b",
+			"key": "user-service-host",
+			"value": ""
+		},
+		{
+			"id": "15bb8a55-7d5f-46b7-aade-610337b8fbbd",
+			"key": "taxi0md-user-service",
+			"value": ""
+		}
+	],
+	"protocolProfileBehavior": {}
+}
