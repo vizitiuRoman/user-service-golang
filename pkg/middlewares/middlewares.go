@@ -2,6 +2,7 @@ package middlewares
 
 import (
 	"errors"
+	"strconv"
 
 	"github.com/user-service/pkg/auth"
 	. "github.com/user-service/pkg/models"
@@ -18,6 +19,7 @@ const (
 
 func CORS(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
+		ctx.SetContentType("application/json")
 		ctx.Response.Header.Set("Access-Control-Allow-Credentials", corsAllowCredentials)
 		ctx.Response.Header.Set("Access-Control-Allow-Headers", corsAllowHeaders)
 		ctx.Response.Header.Set("Access-Control-Allow-Methods", corsAllowMethods)
@@ -44,6 +46,24 @@ func AUTH(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 		ctx.SetUserValue(UserID, token.UserID)
 		ctx.SetUserValue(AccessUUID, token.AccessUUID)
 		ctx.SetUserValue(RefreshUUID, token.RefreshUUID)
+
+		next(ctx)
+	}
+}
+
+func TRUTH(next fasthttp.RequestHandler) fasthttp.RequestHandler {
+	return func(ctx *fasthttp.RequestCtx) {
+		userId, err := strconv.ParseUint(ctx.UserValue("userId").(string), 10, 64)
+		if err != nil {
+			ERROR(ctx, fasthttp.StatusForbidden, errors.New(fasthttp.StatusMessage(fasthttp.StatusForbidden)))
+			return
+		}
+
+		userID := ctx.UserValue(UserID)
+		if userId != userID {
+			ERROR(ctx, fasthttp.StatusForbidden, errors.New(fasthttp.StatusMessage(fasthttp.StatusForbidden)))
+			return
+		}
 
 		next(ctx)
 	}

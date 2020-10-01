@@ -3,7 +3,6 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
-	"strconv"
 
 	"github.com/user-service/pkg/auth"
 	. "github.com/user-service/pkg/models"
@@ -11,8 +10,9 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-type UserWithToken struct {
-	*User
+type authResponse struct {
+	ID    uint64 `json:"id"`
+	Email string `json:"email"`
 	Token string `json:"token"`
 }
 
@@ -50,7 +50,7 @@ func Login(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	JSON(ctx, fasthttp.StatusOK, UserWithToken{foundUser, token})
+	JSON(ctx, fasthttp.StatusOK, authResponse{foundUser.ID, foundUser.Email, token})
 }
 
 func Register(ctx *fasthttp.RequestCtx) {
@@ -80,30 +80,46 @@ func Register(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	JSON(ctx, fasthttp.StatusCreated, UserWithToken{createdUser, token})
+	JSON(ctx, fasthttp.StatusOK, authResponse{createdUser.ID, createdUser.Email, token})
 }
 
 func Logout(ctx *fasthttp.RequestCtx) {
-	id, err := strconv.ParseUint(ctx.UserValue("id").(string), 10, 64)
-	if err != nil {
-		ERROR(ctx, fasthttp.StatusBadRequest, err)
-		return
-	}
-
-	userID := ctx.UserValue(UserID)
 	aUUID := ctx.UserValue(AccessUUID).(string)
 	rUUID := ctx.UserValue(RefreshUUID).(string)
 
-	if id != userID {
-		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
-		return
-	}
-
 	var token TokenDetails
-	err = token.DeleteByUUID(ctx, aUUID, rUUID)
+	err := token.DeleteByUUID(ctx, aUUID, rUUID)
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
 		return
 	}
 	JSON(ctx, fasthttp.StatusOK, fasthttp.StatusMessage(fasthttp.StatusOK))
+}
+
+func RefreshToken(ctx *fasthttp.RequestCtx) {
+	userID := ctx.UserValue(UserID).(uint64)
+	aUUID := ctx.UserValue(AccessUUID).(string)
+	rUUID := ctx.UserValue(RefreshUUID).(string)
+
+	var oldToken TokenDetails
+	err := oldToken.DeleteByUUID(ctx, aUUID, rUUID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	token, err := auth.CreateToken(ctx, userID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	var user User
+	foundUser, err := user.FindByID(userID)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	JSON(ctx, fasthttp.StatusOK, authResponse{foundUser.ID, foundUser.Email, token})
 }

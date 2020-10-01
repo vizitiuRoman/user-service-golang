@@ -31,14 +31,20 @@ func initLogger() error {
 func initControllers() *Router {
 	router := New()
 
-	router.GET("/api/v1/home", Home)
+	// Ping
+	router.GET("/api/ping", Ping)
 
 	// Auth
 	router.POST("/api/v1/auth/login", Login)
 	router.POST("/api/v1/auth/register", Register)
-	router.GET("/api/v1/auth/logout/{id}", middlewares.AUTH(Logout))
+	router.GET("/api/v1/auth/refresh", middlewares.AUTH(RefreshToken))
+	router.GET("/api/v1/auth/logout/{userId}", middlewares.AUTH(middlewares.TRUTH(Logout)))
 
-	router.GET("/api/v1/token", middlewares.AUTH(Token))
+	// User
+	router.GET("/api/v1/users", GetUsers)
+	router.GET("/api/v1/users/{userId}", middlewares.AUTH(middlewares.TRUTH(GetUser)))
+	router.POST("/api/v1/users", middlewares.AUTH(UpdateUser))
+	router.DELETE("/api/v1/users/{userId}", middlewares.AUTH(middlewares.TRUTH(DeleteUser)))
 
 	return router
 }

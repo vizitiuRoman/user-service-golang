@@ -16,10 +16,8 @@ const schema = `
 			id serial primary key,
 			email varchar(255) NOT NULL UNIQUE,
 			password varchar(255) NOT NULL,
-			age varchar(255) NOT NULL,
-			first_name varchar(255) NOT NULL,
-			last_name varchar(255) NOT NULL,
-			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+			created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+			updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 		);
 	`
 
