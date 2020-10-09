@@ -4,7 +4,6 @@ import (
 	"context"
 	"errors"
 	"fmt"
-	"os"
 	"strconv"
 	"strings"
 	"time"
@@ -27,7 +26,7 @@ func prepareToken(extractedToken string) (*jwt.Token, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
 		}
-		return []byte(os.Getenv("API_SECRET")), nil
+		return []byte(SECRET), nil
 	})
 	if err != nil {
 		return &jwt.Token{}, err
@@ -52,7 +51,7 @@ func CreateToken(ctx context.Context, userID uint64) (string, error) {
 	claims[RefreshUUID] = refreshUUID
 	claims["exp"] = time.Now().Add(TokenExpires).Unix()
 	token, err := jwt.NewWithClaims(jwt.SigningMethodHS256, claims).SignedString(
-		[]byte(os.Getenv("API_SECRET")),
+		[]byte(SECRET),
 	)
 	if err != nil {
 		return "", err
