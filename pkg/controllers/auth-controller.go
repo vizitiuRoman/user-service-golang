@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	"github.com/user-service/pkg/auth"
 	. "github.com/user-service/pkg/models"
@@ -11,9 +12,10 @@ import (
 )
 
 type authResponse struct {
-	ID    uint64 `json:"id"`
-	Email string `json:"email"`
-	Token string `json:"token"`
+	ID     uint64 `json:"id"`
+	Email  string `json:"email"`
+	AToken string `json:"token"`
+	RToken string `json:"refreshToken"`
 }
 
 func Login(ctx *fasthttp.RequestCtx) {
@@ -50,7 +52,10 @@ func Login(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	JSON(ctx, fasthttp.StatusOK, authResponse{foundUser.ID, foundUser.Email, token})
+	JSON(ctx, fasthttp.StatusOK, authResponse{
+		foundUser.ID, foundUser.Email,
+		token.AToken, token.RToken,
+	})
 }
 
 func Register(ctx *fasthttp.RequestCtx) {
@@ -80,15 +85,19 @@ func Register(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	JSON(ctx, fasthttp.StatusOK, authResponse{createdUser.ID, createdUser.Email, token})
+	JSON(ctx, fasthttp.StatusOK, authResponse{
+		createdUser.ID, createdUser.Email,
+		token.AToken, token.RToken,
+	})
 }
 
 func Logout(ctx *fasthttp.RequestCtx) {
-	aUUID := ctx.UserValue(AccessUUID).(string)
-	rUUID := ctx.UserValue(RefreshUUID).(string)
+	userID := ctx.UserValue(UserID).(string)
+	atUUID := ctx.UserValue(AtUUID).(string)
+	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
 
 	var token TokenDetails
-	err := token.DeleteByUUID(ctx, aUUID, rUUID)
+	err := token.DeleteByUUID(ctx, atUUID, rtUUID)
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
 		return
@@ -98,11 +107,23 @@ func Logout(ctx *fasthttp.RequestCtx) {
 
 func RefreshToken(ctx *fasthttp.RequestCtx) {
 	userID := ctx.UserValue(UserID).(uint64)
-	aUUID := ctx.UserValue(AccessUUID).(string)
-	rUUID := ctx.UserValue(RefreshUUID).(string)
+	atUUID := ctx.UserValue(AtUUID).(string)
+	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
+	rToken := ctx.UserValue("rToken").(string)
 
-	var oldToken TokenDetails
-	err := oldToken.DeleteByUUID(ctx, aUUID, rUUID)
+	extractedToken, err := auth.ExtractRtMetadata(rToken)
+	if err != nil {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	if extractedToken.RtUUID != rtUUID {
+		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+		return
+	}
+
+	var tokenDetails TokenDetails
+	err = tokenDetails.DeleteByUUID(ctx, atUUID, rtUUID)
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
 		return
@@ -121,5 +142,8 @@ func RefreshToken(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	JSON(ctx, fasthttp.StatusOK, authResponse{foundUser.ID, foundUser.Email, token})
+	JSON(ctx, fasthttp.StatusOK, authResponse{
+		foundUser.ID, foundUser.Email,
+		token.AToken, token.RToken,
+	})
 }
