@@ -83,10 +83,8 @@ func (srv *Service) StartRPC() {
 	}
 	rpc.HandleHTTP()
 
-	zap.S().Info("RPC started on port: " + srv.rpcPort)
-
 	go func(listenRPC chan error) {
-		zap.S().Info("Service started on port: " + srv.port)
+		zap.S().Info("RPC started on port: " + srv.rpcPort)
 
 		listenRPC <- http.ListenAndServe(":"+srv.rpcPort, nil)
 	}(srv.listenRPC)
