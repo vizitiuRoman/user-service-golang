@@ -18,7 +18,7 @@ const (
 )
 
 func TestMain(m *testing.M) {
-	err := godotenv.Load(os.ExpandEnv("../../.env"))
+	err := godotenv.Load(os.ExpandEnv("../../.env.test"))
 	if err != nil {
 		log.Fatalf("Cannot load env error: %v", err)
 	}
