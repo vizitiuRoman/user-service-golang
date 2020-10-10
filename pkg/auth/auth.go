@@ -45,8 +45,9 @@ func prepareToken(extractedToken string) (*jwt.Token, error) {
 
 func extractToken(ctx *fasthttp.RequestCtx) string {
 	bearerToken := ctx.Request.Header.Peek("Authorization")
-	if len(strings.Split(string(bearerToken), " ")) == 2 {
-		return strings.Split(string(bearerToken), " ")[1]
+	authToken := strings.Split(string(bearerToken), " ")
+	if len(authToken) == 2 {
+		return authToken[1]
 	}
 	return ""
 }

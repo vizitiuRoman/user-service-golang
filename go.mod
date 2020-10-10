@@ -12,6 +12,7 @@ require (
 	github.com/lib/pq v1.2.0
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
 	github.com/myesui/uuid v1.0.0 // indirect
+	github.com/stretchr/testify v1.6.1
 	github.com/twinj/uuid v1.0.0
 	github.com/valyala/fasthttp v1.16.0
 	go.uber.org/zap v1.15.0
