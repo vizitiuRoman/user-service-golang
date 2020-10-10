@@ -36,8 +36,8 @@ func AUTH(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 			return
 		}
 
-		var tokenDetails TokenDetails
-		_, err = tokenDetails.GetByAtUUID(ctx, token.UserID, token.AtUUID)
+		var td TokenDetails
+		_, err = td.GetByAtUUID(ctx, token.UserID, token.AtUUID)
 		if err != nil {
 			ERROR(ctx, fasthttp.StatusUnauthorized, err)
 			return

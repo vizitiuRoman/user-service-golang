@@ -73,7 +73,7 @@ func CreateToken(ctx context.Context, userID uint64) (*createToken, error) {
 		return &createToken{}, err
 	}
 
-	tokenDetails := &TokenDetails{
+	td := &TokenDetails{
 		AToken:    aToken,
 		RToken:    rToken,
 		AtUUID:    atUUID,
@@ -81,7 +81,7 @@ func CreateToken(ctx context.Context, userID uint64) (*createToken, error) {
 		AtExpires: time.Now().Add(AtExpires).Unix(),
 		RtExpires: time.Now().Add(RtExpires).Unix(),
 	}
-	err = tokenDetails.Create(ctx, userID)
+	err = td.Create(ctx, userID)
 	if err != nil {
 		return &createToken{}, err
 	}

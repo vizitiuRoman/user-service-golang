@@ -11,7 +11,7 @@ import (
 
 type TokenModel interface {
 	Create(context.Context, uint64) error
-	GetByUserID(context.Context, uint64, string, string) (uint64, error)
+	GetByAtUUID(context.Context, uint64, string) (uint64, error)
 	DeleteByUUID(context.Context, string, string) error
 }
 
@@ -52,42 +52,14 @@ func (td *TokenDetails) GetByAtUUID(ctx context.Context, usrID uint64, atUUID st
 	return userID, nil
 }
 
-func (td *TokenDetails) GetByRtUUID(ctx context.Context, usrID uint64, rtUUID string) (uint64, error) {
-	userid, err := rds.Get(ctx, rtUUID).Result()
-	if err != nil {
-		return 0, err
-	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
-	if usrID != userID {
-		return 0, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized))
-	}
-	return userID, nil
-}
-
-func (td *TokenDetails) GetByUUID(ctx context.Context, usrID uint64, atUUID, rtUUID string) (uint64, error) {
-	userid, err := rds.Get(ctx, atUUID).Result()
-	if err != nil {
-		return 0, err
-	}
-	_, err = rds.Get(ctx, rtUUID).Result()
-	if err != nil {
-		return 0, err
-	}
-	userID, _ := strconv.ParseUint(userid, 10, 64)
-	if usrID != userID {
-		return 0, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized))
-	}
-	return userID, nil
-}
-
 func (td *TokenDetails) DeleteByUUID(ctx context.Context, atUUID, rtUUID string) error {
-	ok, _ := rds.Del(ctx, atUUID).Result()
+	ok, err := rds.Del(ctx, atUUID).Result()
 	if ok != 1 {
-		return errors.New("Error to delete access uuid")
+		return err
 	}
-	ok, _ = rds.Del(ctx, rtUUID).Result()
+	ok, err = rds.Del(ctx, rtUUID).Result()
 	if ok != 1 {
-		return errors.New("Error to delete refresh uuid")
+		return err
 	}
 	return nil
 }

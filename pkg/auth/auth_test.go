@@ -8,7 +8,7 @@ import (
 
 	"github.com/joho/godotenv"
 	"github.com/stretchr/testify/assert"
-	"github.com/user-service/pkg/models"
+	. "github.com/user-service/pkg/models"
 	"github.com/valyala/fasthttp"
 )
 
@@ -22,7 +22,7 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatalf("Cannot load env error: %v", err)
 	}
-	err = models.InitRedis()
+	err = InitRedis()
 	if err != nil {
 		log.Fatalf("Cannot init redis error: %v", err)
 	}

@@ -122,8 +122,8 @@ func RefreshToken(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	var tokenDetails TokenDetails
-	err = tokenDetails.DeleteByUUID(ctx, atUUID, rtUUID)
+	var td TokenDetails
+	err = td.DeleteByUUID(ctx, atUUID, rtUUID)
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
 		return
