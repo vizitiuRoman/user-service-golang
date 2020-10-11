@@ -92,7 +92,7 @@ func Register(ctx *fasthttp.RequestCtx) {
 }
 
 func Logout(ctx *fasthttp.RequestCtx) {
-	userID := ctx.UserValue(UserID).(string)
+	userID := ctx.UserValue(UserID).(uint64)
 	atUUID := ctx.UserValue(AtUUID).(string)
 	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
 
