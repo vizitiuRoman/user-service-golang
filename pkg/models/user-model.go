@@ -17,7 +17,7 @@ type UserModel interface {
 	FindAll() (*[]User, error)
 	FindByID(uint64) (*User, error)
 	FindByEmail(string) (*User, error)
-	Update(uint64) error
+	Update() error
 }
 
 type User struct {
@@ -109,7 +109,7 @@ func (user *User) FindByEmail(email string) (*User, error) {
 	return user, nil
 }
 
-func (user *User) Update(userID uint64) error {
+func (user *User) Update() error {
 	hashedPassword, err := hashPassword(user.Password)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (user *User) Update(userID uint64) error {
 		UPDATE users 
 		SET email=$2, password=$3 
 		WHERE id = $1`,
-		userID, user.Email, user.Password,
+		user.ID, user.Email, user.Password,
 	)
 	if err != nil {
 		return err

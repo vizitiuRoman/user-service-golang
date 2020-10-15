@@ -54,7 +54,7 @@ func UpdateUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	err = user.Update(userID)
+	err = user.Update()
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusInternalServerError, err)
 		return

@@ -155,7 +155,7 @@ func TestUpdateUser(t *testing.T) {
 		t.Errorf("Cannot create user error: %v", err)
 	}
 
-	err = user.Update(createdUser.ID)
+	err = createdUser.Update()
 	if err != nil {
 		t.Errorf("Cannot update user error: %v", err)
 	}
