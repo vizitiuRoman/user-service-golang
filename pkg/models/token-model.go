@@ -10,41 +10,38 @@ import (
 )
 
 type TokenModel interface {
-	Create(ctx context.Context, userID uint64) error
-	GetByUUID(ctx context.Context, usrID uint64) (uint64, error)
-	DeleteByUUID(ctx context.Context, aUUID, rUUID string) error
+	Create(context.Context, uint64) error
+	GetByAtUUID(context.Context, uint64, string) (uint64, error)
+	DeleteByUUID(context.Context, string, string) error
 }
 
 type TokenDetails struct {
-	AccessToken string
-	AccessUUID  string
-	RefreshUUID string
-	AtExpires   int64
-	RtExpires   int64
+	AToken    string
+	RToken    string
+	AtUUID    string
+	RtUUID    string
+	AtExpires int64
+	RtExpires int64
 }
 
-func (t *TokenDetails) Create(ctx context.Context, userID uint64) error {
-	at := time.Unix(t.AtExpires, 0)
-	rt := time.Unix(t.RtExpires, 0)
+func (td *TokenDetails) Create(ctx context.Context, userID uint64) error {
+	at := time.Unix(td.AtExpires, 0)
+	rt := time.Unix(td.RtExpires, 0)
 	now := time.Now()
 
-	errAccess := rds.Set(ctx, t.AccessUUID, strconv.Itoa(int(userID)), at.Sub(now)).Err()
+	errAccess := rds.Set(ctx, td.AtUUID, strconv.Itoa(int(userID)), at.Sub(now)).Err()
 	if errAccess != nil {
 		return errAccess
 	}
-	errRefresh := rds.Set(ctx, t.RefreshUUID, strconv.Itoa(int(userID)), rt.Sub(now)).Err()
+	errRefresh := rds.Set(ctx, td.RtUUID, strconv.Itoa(int(userID)), rt.Sub(now)).Err()
 	if errRefresh != nil {
 		return errRefresh
 	}
 	return nil
 }
 
-func (t *TokenDetails) GetByUUID(ctx context.Context, usrID uint64) (uint64, error) {
-	userid, err := rds.Get(ctx, t.AccessUUID).Result()
-	if err != nil {
-		return 0, err
-	}
-	_, err = rds.Get(ctx, t.RefreshUUID).Result()
+func (td *TokenDetails) GetByAtUUID(ctx context.Context, usrID uint64, atUUID string) (uint64, error) {
+	userid, err := rds.Get(ctx, atUUID).Result()
 	if err != nil {
 		return 0, err
 	}
@@ -55,14 +52,14 @@ func (t *TokenDetails) GetByUUID(ctx context.Context, usrID uint64) (uint64, err
 	return userID, nil
 }
 
-func (t *TokenDetails) DeleteByUUID(ctx context.Context, aUUID, rUUID string) error {
-	ok, _ := rds.Del(ctx, aUUID).Result()
+func (td *TokenDetails) DeleteByUUID(ctx context.Context, atUUID, rtUUID string) error {
+	ok, err := rds.Del(ctx, atUUID).Result()
 	if ok != 1 {
-		return errors.New("Error to delete access uuid")
+		return err
 	}
-	ok, _ = rds.Del(ctx, rUUID).Result()
+	ok, err = rds.Del(ctx, rtUUID).Result()
 	if ok != 1 {
-		return errors.New("Error to delete refresh uuid")
+		return err
 	}
 	return nil
 }

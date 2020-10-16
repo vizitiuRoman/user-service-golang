@@ -37,7 +37,7 @@ func initControllers() *Router {
 	// Auth
 	router.POST("/api/v1/auth/login", Login)
 	router.POST("/api/v1/auth/register", Register)
-	router.GET("/api/v1/auth/refresh", middlewares.AUTH(RefreshToken))
+	router.GET("/api/v1/auth/refresh/{rToken}", middlewares.AUTH(RefreshToken))
 	router.GET("/api/v1/auth/logout/{userId}", middlewares.AUTH(middlewares.TRUTH(Logout)))
 
 	// User

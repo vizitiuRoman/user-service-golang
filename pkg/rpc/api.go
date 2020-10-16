@@ -5,7 +5,7 @@ import (
 )
 
 type Rpc interface {
-	GetUsers(_ int, reply *[]User) error
+	GetUsers(int, *[]User) error
 	GetUser(int, *User) error
 }
 

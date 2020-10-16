@@ -11,13 +11,13 @@ import (
 
 type UserModel interface {
 	Prepare()
-	Validate(action string) error
+	Validate(string) error
 	Create() (*User, error)
-	DeleteByID(userID uint64) error
+	DeleteByID(uint64) error
 	FindAll() (*[]User, error)
-	FindByID(id uint64) (*User, error)
-	FindByEmail(email string) (*User, error)
-	Update(userID uint64) error
+	FindByID(uint64) (*User, error)
+	FindByEmail(string) (*User, error)
+	Update() error
 }
 
 type User struct {
@@ -26,6 +26,14 @@ type User struct {
 	Password  string    `db:"password" json:"password,omitempty"`
 	CreatedAt time.Time `db:"created_at" json:"-"`
 	UpdatedAt time.Time `db:"updated_at" json:"-"`
+}
+
+func hashPassword(password string) ([]byte, error) {
+	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
+}
+
+func VerifyPassword(hashedPassword, password string) error {
+	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
 func (user *User) Prepare() {
@@ -52,14 +60,6 @@ func (user *User) Validate(action string) error {
 		}
 	}
 	return nil
-}
-
-func hashPassword(password string) ([]byte, error) {
-	return bcrypt.GenerateFromPassword([]byte(password), bcrypt.DefaultCost)
-}
-
-func VerifyPassword(hashedPassword, password string) error {
-	return bcrypt.CompareHashAndPassword([]byte(hashedPassword), []byte(password))
 }
 
 func (user *User) Create() (*User, error) {
@@ -109,7 +109,7 @@ func (user *User) FindByEmail(email string) (*User, error) {
 	return user, nil
 }
 
-func (user *User) Update(userID uint64) error {
+func (user *User) Update() error {
 	hashedPassword, err := hashPassword(user.Password)
 	if err != nil {
 		return err
@@ -119,7 +119,7 @@ func (user *User) Update(userID uint64) error {
 		UPDATE users 
 		SET email=$2, password=$3 
 		WHERE id = $1`,
-		userID, user.Email, user.Password,
+		user.ID, user.Email, user.Password,
 	)
 	if err != nil {
 		return err

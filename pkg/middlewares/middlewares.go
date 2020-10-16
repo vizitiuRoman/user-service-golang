@@ -30,22 +30,20 @@ func CORS(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 
 func AUTH(next fasthttp.RequestHandler) fasthttp.RequestHandler {
 	return func(ctx *fasthttp.RequestCtx) {
-		token, err := auth.ExtractTokenMetadata(ctx)
+		token, err := auth.ExtractAtMetadata(ctx)
 		if err != nil {
-			ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+			ERROR(ctx, fasthttp.StatusUnauthorized, err)
 			return
 		}
 
-		tokenDetails := TokenDetails{AccessUUID: token.AccessUUID, RefreshUUID: token.RefreshUUID}
-		_, err = tokenDetails.GetByUUID(ctx, token.UserID)
+		var td TokenDetails
+		_, err = td.GetByAtUUID(ctx, token.UserID, token.AtUUID)
 		if err != nil {
-			ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
+			ERROR(ctx, fasthttp.StatusUnauthorized, err)
 			return
 		}
-
 		ctx.SetUserValue(UserID, token.UserID)
-		ctx.SetUserValue(AccessUUID, token.AccessUUID)
-		ctx.SetUserValue(RefreshUUID, token.RefreshUUID)
+		ctx.SetUserValue(AtUUID, token.AtUUID)
 
 		next(ctx)
 	}

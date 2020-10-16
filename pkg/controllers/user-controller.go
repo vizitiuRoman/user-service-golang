@@ -3,6 +3,7 @@ package controllers
 import (
 	"encoding/json"
 	"errors"
+	"fmt"
 
 	. "github.com/user-service/pkg/models"
 	. "github.com/user-service/pkg/utils"
@@ -53,7 +54,7 @@ func UpdateUser(ctx *fasthttp.RequestCtx) {
 		return
 	}
 
-	err = user.Update(userID)
+	err = user.Update()
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusInternalServerError, err)
 		return
@@ -64,12 +65,11 @@ func UpdateUser(ctx *fasthttp.RequestCtx) {
 
 func DeleteUser(ctx *fasthttp.RequestCtx) {
 	userID := ctx.UserValue(UserID).(uint64)
-
-	aUUID := ctx.UserValue(AccessUUID).(string)
-	rUUID := ctx.UserValue(RefreshUUID).(string)
+	atUUID := ctx.UserValue(AtUUID).(string)
+	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
 
 	var token TokenDetails
-	err := token.DeleteByUUID(ctx, aUUID, rUUID)
+	err := token.DeleteByUUID(ctx, atUUID, rtUUID)
 	if err != nil {
 		ERROR(ctx, fasthttp.StatusUnauthorized, errors.New(fasthttp.StatusMessage(fasthttp.StatusUnauthorized)))
 		return
