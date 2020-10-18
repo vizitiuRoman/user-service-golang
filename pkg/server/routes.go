@@ -12,17 +12,24 @@ func initControllers() *Router {
 	// Ping
 	router.GET("/api/ping", Ping)
 
-	// Auth
-	router.POST("/api/v1/auth/login", Login)
-	router.POST("/api/v1/auth/register", Register)
-	router.GET("/api/v1/auth/refresh/{rToken}", middlewares.AUTH(RefreshToken))
-	router.GET("/api/v1/auth/logout/{userId}", middlewares.AUTH(middlewares.TRUTH(Logout)))
+	v1 := router.Group("/api/v1")
+	{
+		auth := v1.Group("/auth")
+		{
+			auth.POST("/login", Login)
+			auth.POST("/register", Register)
+			auth.GET("/refresh/{rToken}", middlewares.AUTH(RefreshToken))
+			auth.GET("/logout/{userId}", middlewares.AUTH(middlewares.TRUTH(Logout)))
+		}
 
-	// Users
-	router.GET("/api/v1/users", GetUsers)
-	router.GET("/api/v1/users/{userId}", middlewares.AUTH(middlewares.TRUTH(GetUser)))
-	router.POST("/api/v1/users", middlewares.AUTH(UpdateUser))
-	router.DELETE("/api/v1/users/{userId}", middlewares.AUTH(middlewares.TRUTH(DeleteUser)))
+		users := v1.Group("/users")
+		{
+			users.GET("", GetUsers)
+			users.GET("{userId}", middlewares.AUTH(middlewares.TRUTH(GetUser)))
+			users.POST("", middlewares.AUTH(UpdateUser))
+			users.DELETE("{userId}", middlewares.AUTH(middlewares.TRUTH(DeleteUser)))
+		}
+	}
 
 	return router
 }
