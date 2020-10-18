@@ -6,6 +6,7 @@ import (
 
 func main() {
 	srv := server.NewService()
+	srv.Init()
 	go srv.StartRPC()
 	srv.StartAPI()
 }

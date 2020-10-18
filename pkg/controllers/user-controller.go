@@ -26,7 +26,7 @@ func GetUser(ctx *fasthttp.RequestCtx) {
 	var user User
 	foundUser, err := user.FindByID(userID)
 	if err != nil {
-		ERROR(ctx, fasthttp.StatusNotFound, errors.New("Not found user"))
+		ERROR(ctx, fasthttp.StatusNotFound, errors.New(fasthttp.StatusMessage(fasthttp.StatusNotFound)))
 		return
 	}
 	JSON(ctx, fasthttp.StatusOK, foundUser)
