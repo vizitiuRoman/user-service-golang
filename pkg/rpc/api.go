@@ -2,6 +2,7 @@ package rpc
 
 import (
 	. "github.com/user-service/pkg/models"
+	"go.uber.org/zap"
 )
 
 type Rpc interface {
@@ -9,7 +10,13 @@ type Rpc interface {
 	GetUser(int, *User) error
 }
 
-type UserRPC struct{}
+type UserRPC struct {
+	logger *zap.SugaredLogger
+}
+
+func NewUserRPC(logger *zap.SugaredLogger) *UserRPC {
+	return &UserRPC{logger}
+}
 
 func (u *UserRPC) GetUsers(_ int, reply *[]User) error {
 	var user User

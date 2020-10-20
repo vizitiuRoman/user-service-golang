@@ -24,7 +24,6 @@ type UserService interface {
 }
 
 type Service struct {
-	controllers  fasthttp.RequestHandler
 	logger       *zap.SugaredLogger
 	port         string
 	rpcPort      string
@@ -32,6 +31,18 @@ type Service struct {
 	listenAPI    chan error
 	interruptRPC chan os.Signal
 	listenRPC    chan error
+}
+
+func NewService() *Service {
+	return &Service{
+		logger:       initLogger(),
+		port:         "",
+		rpcPort:      "",
+		interruptAPI: make(chan os.Signal, 1),
+		listenAPI:    make(chan error, 1),
+		interruptRPC: make(chan os.Signal, 1),
+		listenRPC:    make(chan error, 1),
+	}
 }
 
 func (srv *Service) Init() {
@@ -66,23 +77,10 @@ func (srv *Service) Init() {
 	srv.rpcPort = os.Getenv("RPC_PORT")
 }
 
-func NewService() *Service {
-	return &Service{
-		controllers:  initControllers().Handler,
-		logger:       initLogger(),
-		port:         "",
-		rpcPort:      "",
-		interruptAPI: make(chan os.Signal, 1),
-		listenAPI:    make(chan error, 1),
-		interruptRPC: make(chan os.Signal, 1),
-		listenRPC:    make(chan error, 1),
-	}
-}
-
 func (srv *Service) StartRPC() {
 	log.SetFlags(log.LstdFlags | log.Lshortfile)
 
-	api := new(UserRPC)
+	api := NewUserRPC(srv.logger)
 	err := rpc.Register(api)
 	if err != nil {
 		srv.logger.Fatalf("Listener error: %v", err)
@@ -104,7 +102,7 @@ func (srv *Service) StartAPI() {
 
 	go func(listenAPI chan error) {
 		srv.logger.Info("Service started on port: " + srv.port)
-		listenAPI <- fasthttp.ListenAndServe(":"+srv.port, middlewares.CORS(srv.controllers))
+		listenAPI <- fasthttp.ListenAndServe(":"+srv.port, middlewares.CORS(initControllers(srv.logger).Handler))
 	}(srv.listenAPI)
 
 	signal.Notify(srv.interruptAPI, syscall.SIGINT, syscall.SIGTERM)

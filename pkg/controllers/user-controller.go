@@ -10,7 +10,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func GetUsers(ctx *fasthttp.RequestCtx) {
+func (c *Controller) GetUsers(ctx *fasthttp.RequestCtx) {
 	var user User
 	users, err := user.FindAll()
 	if err != nil {
@@ -20,7 +20,7 @@ func GetUsers(ctx *fasthttp.RequestCtx) {
 	JSON(ctx, fasthttp.StatusOK, users)
 }
 
-func GetUser(ctx *fasthttp.RequestCtx) {
+func (c *Controller) GetUser(ctx *fasthttp.RequestCtx) {
 	userID := ctx.UserValue(UserID).(uint64)
 
 	var user User
@@ -32,7 +32,7 @@ func GetUser(ctx *fasthttp.RequestCtx) {
 	JSON(ctx, fasthttp.StatusOK, foundUser)
 }
 
-func UpdateUser(ctx *fasthttp.RequestCtx) {
+func (c *Controller) UpdateUser(ctx *fasthttp.RequestCtx) {
 	userID := ctx.UserValue(UserID).(uint64)
 
 	var user User
@@ -63,7 +63,7 @@ func UpdateUser(ctx *fasthttp.RequestCtx) {
 	JSON(ctx, fasthttp.StatusOK, User{ID: userID, Email: user.Email})
 }
 
-func DeleteUser(ctx *fasthttp.RequestCtx) {
+func (c *Controller) DeleteUser(ctx *fasthttp.RequestCtx) {
 	userID := ctx.UserValue(UserID).(uint64)
 	atUUID := ctx.UserValue(AtUUID).(string)
 	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)

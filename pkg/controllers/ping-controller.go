@@ -5,6 +5,7 @@ import (
 	"github.com/valyala/fasthttp"
 )
 
-func Ping(ctx *fasthttp.RequestCtx) {
+func (c *Controller) Ping(ctx *fasthttp.RequestCtx) {
+	c.logger.Info("Ping")
 	JSON(ctx, fasthttp.StatusOK, "User service OK")
 }
