@@ -19,7 +19,6 @@ type authResponse struct {
 }
 
 func (c *Controller) Login(ctx *fasthttp.RequestCtx) {
-	c.logger.Info(ctx.ConnRequestNum())
 	var user User
 	err := json.Unmarshal(ctx.PostBody(), &user)
 	if err != nil {
@@ -60,7 +59,6 @@ func (c *Controller) Login(ctx *fasthttp.RequestCtx) {
 }
 
 func (c *Controller) Register(ctx *fasthttp.RequestCtx) {
-	c.logger.Info(ctx.ConnRequestNum())
 	var user User
 	err := json.Unmarshal(ctx.PostBody(), &user)
 	if err != nil {
@@ -94,7 +92,6 @@ func (c *Controller) Register(ctx *fasthttp.RequestCtx) {
 }
 
 func (c *Controller) Logout(ctx *fasthttp.RequestCtx) {
-	c.logger.Info(ctx.ConnRequestNum())
 	userID := ctx.UserValue(UserID).(uint64)
 	atUUID := ctx.UserValue(AtUUID).(string)
 	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
@@ -109,7 +106,6 @@ func (c *Controller) Logout(ctx *fasthttp.RequestCtx) {
 }
 
 func (c *Controller) RefreshToken(ctx *fasthttp.RequestCtx) {
-	c.logger.Info(ctx.ConnRequestNum())
 	userID := ctx.UserValue(UserID).(uint64)
 	atUUID := ctx.UserValue(AtUUID).(string)
 	rtUUID := fmt.Sprintf("%s++%d", atUUID, userID)
